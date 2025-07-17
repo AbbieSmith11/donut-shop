@@ -1,0 +1,29 @@
+{
+  "name": "donut-shop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbbieSmith11/donut-shop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbbieSmith11/donut-shop/issues"
+  },
+  "homepage": "https://github.com/AbbieSmith11/donut-shop#readme",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
