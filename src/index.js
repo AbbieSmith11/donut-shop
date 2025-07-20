@@ -20,6 +20,7 @@ const pool = mysql
 
 // Variable for database connection
 let db;
+let customerId;
 
 // Test DB connection
 async function connectToDb() {
@@ -45,8 +46,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-// POST quantity of each donut
-
 
 // POST contact details - when fill out form page
 
@@ -58,7 +57,9 @@ app.post("/user-info", async (req, res) => {
       [first_name, last_name, email, address, postcode]
     );
 
-    res.status(201).json({ message: `User ${ result.insertId } created successfully` });
+    let customerId = result.insertId
+
+    res.status(201).json({ message: `User ${ customerId } created successfully` });
   } catch (error) {
     if (!first_name || !last_name || !email || !address || !postcode) {
       return res
@@ -72,6 +73,37 @@ app.post("/user-info", async (req, res) => {
     res.statusMessage(500).json({ error: "Database error" });
   }
 });
+
+// POST an order_id and customer_id
+
+console.log(customerId)
+
+app.post("/create-order", async (req, res) => {
+  try {
+     const [result] = await pool.execute(
+      "INSERT INTO orders (customer_id) VALUES (?)",
+      [customerId]
+      
+    );
+
+    res.status(201).json({ message: `Order ${ result.insertId } created successfully` });
+  } catch (error) {
+    if (!customerId) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Can't find value for customerId",
+        });
+    }
+    console.error("Error inserting customerId", error);
+    res.statusMessage(500).json({ error: "Database error" });
+  }
+});
+
+// POST - an order items
+
+
 
 // GET order summary - customer details (all, not id), order details: name donut (from donut ID), quantity, prices and calculate total price
 app.get("/summary", async (req, res) => {
