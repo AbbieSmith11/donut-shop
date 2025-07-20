@@ -27,7 +27,6 @@ VALUES
     CREATE TABLE orders (
 	order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT,
-    total_price DECIMAL(6, 2) NOT NULL,
     FOREIGN KEY(customer_id) REFERENCES customers(customer_id));
     
     -- insert into orders
