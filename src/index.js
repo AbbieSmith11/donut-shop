@@ -77,7 +77,7 @@ app.post("/user-info", async (req, res) => {
 // POST an order_id and customer_id
 
 console.log(customerId)
-
+let orderId;
 app.post("/create-order", async (req, res) => {
   try {
      const [result] = await pool.execute(
@@ -85,8 +85,8 @@ app.post("/create-order", async (req, res) => {
       [customerId]
       
     );
-
-    res.status(201).json({ message: `Order ${ result.insertId } created successfully` });
+    orderId = result.insertId
+    res.status(201).json({ message: `Order ${ orderId } created successfully` });
   } catch (error) {
     if (!customerId) {
       return res
@@ -102,7 +102,29 @@ app.post("/create-order", async (req, res) => {
 });
 
 // POST - an order items
+const { donut_id, quantity } = req.body;
+app.post('/order-items', async (req, res) => {
 
+  try {
+    const [result] = await pool.execute(
+      'INSERT INTO order_items (order_id, donut_id, quantity) VALUES (?,?,?)'
+    ,[orderId, donut_id, quantity])
+
+    res.status(201).json({ message: `Order items ${ result.insertId } created successfully` });
+  }
+  catch (error){
+    if(!orderId || !donut_id || !quantity){
+      return res
+        .status(400)
+        .json({
+          error:
+            "Order Id, donut Id and quantity required",
+        });
+    }
+    console.error("Error inserting order items", error);
+    res.statusMessage(500).json({ error: "Database error" });
+  }
+})
 
 
 // GET order summary - customer details (all, not id), order details: name donut (from donut ID), quantity, prices and calculate total price
@@ -123,8 +145,6 @@ app.get("/summary", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch donuts" });
   }
 });
-
-// DELETE - delete order (if order is cancelled by clicking cancel button)
 
 // Main function
 async function main() {
