@@ -56,8 +56,20 @@ app.get('/', async (req, res) => {
 
 
 // GET order summary - customer details (all, not id), order details: name donut (from donut ID), quantity, prices and calculate total price
+app.get('/summary', async (req, res) => {
+    try {
+        const [customers] = await pool.query('SELECT first_name, last_name, email, address, postcode FROM customers');
+        const [order] = await pool.query('SELECT d.donut_name, o.quantity, d.price, (o.quantity * d.price) AS total_price FROM order_items o JOIN donuts d ON o.donut_id = d.donut_id');
+        res.json({
+            customers,
+            order
+        });
+    } catch (error) {
+        console.error('Error getting donut name and price', error);
+        res.status(500).json({error: 'Failed to fetch donuts'})
 
-
+    }
+});
 
 // DELETE - delete order (if order is cancelled by clicking cancel button)
 
